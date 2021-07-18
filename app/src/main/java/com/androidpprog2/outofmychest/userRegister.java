@@ -5,16 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
 public class userRegister extends AppCompatActivity {
     TextView registerEmail, registerPassword, registerUsername;
     Button btn_register;
+    ProgressBar progressBar;
 
     FirebaseDatabase rootNode;
     DatabaseReference reference;
@@ -29,22 +29,47 @@ public class userRegister extends AppCompatActivity {
 
         btn_register = (Button)findViewById(R.id.register_btn_Register);
 
+        progressBar = (ProgressBar)findViewById(R.id.registerProgressBar);
+
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                rootNode = FirebaseDatabase.getInstance();
-                reference = rootNode.getReference("users");
-
-                //Get values from view
-                String email = registerEmail.getText().toString();
-                String username = registerUsername.getText().toString();
-                String password = registerPassword.getText().toString();
-
-                User user = new User(email,username,password);
-
-                reference.child(email).setValue(user);
+                progressBar.setVisibility(View.VISIBLE);
+                registerUser();
             }
         });
 
+    }
+    private void registerUser(){
+        rootNode = FirebaseDatabase.getInstance();
+        reference = rootNode.getReference("users");
+
+        //Get values from view
+        String email = registerEmail.getText().toString();
+        String username = registerUsername.getText().toString();
+        String password = registerPassword.getText().toString();
+
+        //Verify the parameters
+        if(email.isEmpty()){
+            registerEmail.setError("E-mail is required!");
+            registerEmail.requestFocus();
+            return;
+        }
+        if(username.isEmpty()){
+            registerUsername.setError("Username is required!");
+            registerUsername.requestFocus();
+            return;
+        }
+        if(password.isEmpty()){
+            registerUsername.setError("password is required!");
+            registerUsername.requestFocus();
+            return;
+        }
+        //Create the object we are going to save
+        User user = new User(email,username,password);
+        //Save the user
+        reference.child(username).setValue(user);
+        progressBar.setVisibility(View.GONE);
+        //Redirect to login page
     }
 }
