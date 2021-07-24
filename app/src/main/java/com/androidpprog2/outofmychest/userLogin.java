@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,8 +18,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class userLogin extends AppCompatActivity {
-    TextView loginEmail,loginPasword;
+    TextView loginEmail,loginPasword, textRegister;
     Button btn_login;
+    ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,15 +28,32 @@ public class userLogin extends AppCompatActivity {
 
         loginEmail = (TextView)findViewById(R.id.loginUsername_Email);
         loginPasword = (TextView)findViewById(R.id.loginPassword);
+        textRegister = (TextView)findViewById(R.id.loginRegisterText);
 
         btn_login = (Button)findViewById(R.id.login_btn_login);
+
+        progressBar =(ProgressBar)findViewById(R.id.loginProgressBar);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 loginUser();
+                progressBar.setVisibility(View.GONE);
             }
         });
+
+        textRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openRegister();
+            }
+        });
+    }
+
+    private void openRegister(){
+        Intent intent = new Intent(this, userRegister.class);
+        userLogin.this.startActivity(intent);
     }
 
     private void loginUser(){

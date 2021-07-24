@@ -2,6 +2,7 @@ package com.androidpprog2.outofmychest;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -35,10 +36,22 @@ public class userRegister extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                registerUser();
+                if(validateUser(registerUsername)){
+                    registerUser();
+                }
+                progressBar.setVisibility(View.GONE);
+
             }
         });
 
+    }
+    private boolean validateUser(TextView username){
+        String user = username.getText().toString();
+        if(user.isEmpty() || user.contains("[")|| user.contains("]")|| user.contains(",")|| user.contains(".")|| user.contains("$")){
+            registerUsername.setError("Username can not contain [ ] , . $");
+            return false;
+        }
+        return true;
     }
     private void registerUser(){
         rootNode = FirebaseDatabase.getInstance();
@@ -69,7 +82,8 @@ public class userRegister extends AppCompatActivity {
         User user = new User(email,username,password);
         //Save the user
         reference.child(username).setValue(user);
-        progressBar.setVisibility(View.GONE);
         //Redirect to login page
+        Intent intent = new Intent(this, userLogin.class);
+        userRegister.this.startActivity(intent);
     }
 }
