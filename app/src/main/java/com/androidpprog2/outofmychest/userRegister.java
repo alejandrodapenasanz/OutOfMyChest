@@ -1,5 +1,6 @@
 package com.androidpprog2.outofmychest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -9,8 +10,12 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class userRegister extends AppCompatActivity {
     TextView registerEmail, registerPassword, registerUsername;
@@ -19,6 +24,8 @@ public class userRegister extends AppCompatActivity {
 
     FirebaseDatabase rootNode;
     DatabaseReference reference;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,9 +88,63 @@ public class userRegister extends AppCompatActivity {
         //Create the object we are going to save
         User user = new User(email,username,password);
         //Save the user
-        reference.child(username).setValue(user);
-        //Redirect to login page
-        Intent intent = new Intent(this, userLogin.class);
-        userRegister.this.startActivity(intent);
+        canRegister(user);
+
+
+    }
+
+    private void canRegister(User user){
+        int result = 0;
+        String username = user.getUsername();
+        String email = user.getEmail();
+        DatabaseReference referenceDB = FirebaseDatabase.getInstance().getReference("users");
+
+        Query checkUser = referenceDB.orderByChild("username").equalTo(username);
+
+        checkUser.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    String usernameFromDb = snapshot.child(username).child("username").getValue(String.class);
+                    if(username.equals(usernameFromDb)){
+                        registerUsername.setError("Username already exists");
+                    }
+                }else{//Username is not used
+                    Query checkEmail = referenceDB.orderByChild("email").equalTo(email);
+                    checkEmail.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            rootNode = FirebaseDatabase.getInstance();
+                            reference = rootNode.getReference("users");
+                            if(snapshot.exists()){
+                                String emailFromDb = snapshot.child(email).child("email").getValue(String.class);
+                                if(email.equals(emailFromDb)){
+                                    registerEmail.setError("E-mail is already used!");
+                                }
+                            }else{
+                                reference.child(username).setValue(user);
+                                Intent intent = new Intent(getApplicationContext(), userLogin.class);
+                                userRegister.this.startActivity(intent);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+
+                    });
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
     }
 }

@@ -77,7 +77,7 @@ public class userLogin extends AppCompatActivity {
                     if(passwordFromDb.equals(password)){
 
                         //Login
-                        Intent intent = new Intent (getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent (getApplicationContext(), userProfile.class);
                         intent.putExtra("username",usernameFromDb);
                         intent.putExtra("email",emailFromDb);
                         intent.putExtra("password",passwordFromDb);
