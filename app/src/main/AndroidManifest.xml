@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OutOfMyChest">
-        <activity android:name=".userProfile"></activity>
+        <activity android:name=".requestMessage"></activity>
+        <activity android:name=".sendMessage" />
+        <activity android:name=".userProfile" />
         <activity android:name=".userLogin" />
         <activity android:name=".userRegister" />
         <activity android:name=".MainActivity">

@@ -82,6 +82,7 @@ public class userLogin extends AppCompatActivity {
                         intent.putExtra("email",emailFromDb);
                         intent.putExtra("password",passwordFromDb);
 
+
                         startActivity(intent);
                     }else{
                         //Error

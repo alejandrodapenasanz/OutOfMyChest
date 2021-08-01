@@ -92,7 +92,6 @@ public class userRegister extends AppCompatActivity {
 
 
     }
-
     private void canRegister(User user){
         int result = 0;
         String username = user.getUsername();
